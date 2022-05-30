@@ -1,5 +1,6 @@
 package com.hetongxue.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hetongxue.system.domain.User;
 import com.hetongxue.system.mapper.UserMapper;
@@ -28,6 +29,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional(propagation = Propagation.SUPPORTS)
     public List<User> getUserAll() {
         return userMapper.selectList(null);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public User getUserByUsername(String username) {
+        return userMapper.selectOne(new QueryWrapper<User>().eq("username", username));
     }
 
 }

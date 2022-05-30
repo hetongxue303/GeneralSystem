@@ -17,4 +17,9 @@ public interface UserService extends IService<User> {
      * 获取所有用户信息
      */
     List<User> getUserAll();
+
+    /**
+     * 根据用户名查询用户信息
+     */
+    User getUserByUsername(String username);
 }
