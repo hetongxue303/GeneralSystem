@@ -1,6 +1,7 @@
 package com.hetongxue.configuration.security;
 
 import com.hetongxue.security.filter.CaptchaFilter;
+import com.hetongxue.security.filter.JwtAuthenticationFilter;
 import com.hetongxue.security.handler.*;
 import com.hetongxue.security.service.CustomizeUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -37,8 +39,13 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final CaptchaFilter captchaFilter;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager());
     }
 
     @Override
@@ -51,6 +58,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors()
                 .and().csrf().disable()
+                .addFilter(jwtAuthenticationFilter())
                 .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
