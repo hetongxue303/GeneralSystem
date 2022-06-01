@@ -13,7 +13,7 @@ public class CaptchaUtil {
 
     private final static int width = 111;
     private final static int height = 36;
-    private final static int length = 2;
+    private final static int length = 3;
 
     /**
      * 生成验证码

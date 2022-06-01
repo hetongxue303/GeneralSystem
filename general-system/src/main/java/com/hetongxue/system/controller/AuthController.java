@@ -25,7 +25,7 @@ public class AuthController {
         Captcha captcha = CaptchaUtil.generateCaptcha();
         HttpUtil.getSession().setAttribute(Const.CAPTCHA_KEY, captcha.text());
         // 存入redis  这里先使用session进行验证 后期在更换
-        return Result.Success(captcha.toBase64());
+        return Result.Success(captcha.toBase64()).setMessage(captcha.text());
     }
 
 }

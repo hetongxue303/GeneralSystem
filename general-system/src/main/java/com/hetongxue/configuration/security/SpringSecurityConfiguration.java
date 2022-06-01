@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -38,7 +37,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final CaptchaFilter captchaFilter;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -46,13 +45,13 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 登陆认证处理
         http.authorizeRequests().antMatchers(WHITE_LIST).permitAll().anyRequest().authenticated()
-                .and().formLogin().loginProcessingUrl("/login").successHandler(loginSuccessHandler).failureHandler(loginFailureHandler)
+                .and().formLogin().loginProcessingUrl("/login").usernameParameter("username").passwordParameter("password").successHandler(loginSuccessHandler).failureHandler(loginFailureHandler)
                 .and().logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler)
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(accessDeniedHandler)
-                .and().addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors()
-                .and().csrf().disable();
+                .and().csrf().disable()
+                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
@@ -60,6 +59,5 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
         // 配置认证处理器
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
-
 
 }
